@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "../../styles/home.scss";
 import { SingleContact } from "../component/singleContact";
 import { Link } from "react-router-dom";
+import { Context } from "../store/appContext";
 
 export const Home = () => {
-	const [contacts, setContacts] = useState([]);
-	useEffect(() => {
-		fetch("https://assets.breatheco.de/apis/fake/contact/agenda/AntonioCavadas")
-			.then(response => response.json())
-			.then(data => setContacts(data));
-	}, []);
+	const { actions } = useContext(Context);
+	const [contacts, setContacts] = useState(actions.getContacts());
+	useEffect(
+		() => {
+			fetch("https://assets.breatheco.de/apis/fake/contact/agenda/AntonioCavadas")
+				.then(response => response.json())
+				.then(data => actions.setContacts(data))
+				.then(() => setContacts(actions.getContacts()));
+		},
+		[contacts]
+	);
 
 	return (
 		<div className="mt-5">

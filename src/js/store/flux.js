@@ -1,39 +1,27 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
+			contacts: [],
 			name: "",
 			email: "",
 			phone: "",
 			address: "",
+			id: "",
 			agenda_slug: "AntonioCavadas",
 			apiURL: "https://assets.breatheco.de/apis/fake/contact/"
 		},
 		actions: {
-			changeColor: (index, color) => {
-				//get the store
+			setContacts: array => {
 				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
+				setStore({ contacts: array });
+			},
+			getContacts: () => {
+				const store = getStore();
+				return store.contacts;
+			},
+			getValue: value => {
+				const store = getStore();
+				return store[value];
 			},
 			setName: value => {
 				const store = getStore();
@@ -50,6 +38,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setAddress: value => {
 				const store = getStore();
 				setStore({ address: value });
+			},
+			setId: value => {
+				const store = getStore();
+				setStore({ id: value });
 			},
 			postContact: () => {
 				const store = getStore();
@@ -72,6 +64,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 					phone: "",
 					email: "",
 					address: ""
+				});
+			},
+			updateContact: () => {
+				const store = getStore();
+				let data = {
+					full_name: store.name,
+					email: store.email,
+					agenda_slug: store.agenda_slug,
+					address: store.address,
+					phone: store.phone
+				};
+				fetch(store.apiURL + store.id, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(data)
+				});
+				setStore({
+					name: "",
+					phone: "",
+					email: "",
+					address: "",
+					id: ""
 				});
 			},
 			deleteContact: value => {
